@@ -24,7 +24,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "migrations:generate": "npx prisma migrate dev --name ",
     "migrations:run": "npx prisma migrate dev",
-    "vercel-build": "npx prisma migrate deploy"
+    "vercel-build": "npx prisma migrate deploy --schema=src/prisma/schema.prisma"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.0",
