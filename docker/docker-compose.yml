@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  postgres-db:
+    image: postgres:14.1
+    container_name: olga-postgres
+    environment:
+      POSTGRES_USER: "root"
+      POSTGRES_PASSWORD: "root"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    networks:
+      - postgres-db-network
+
+volumes:
+  postgres-db:
+    driver: local
+
+networks:
+  postgres-db-network:
+    driver: bridge

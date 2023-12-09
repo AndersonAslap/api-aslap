@@ -1,0 +1,250 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model customer {
+  id                       String           @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt                DateTime         @default(now())
+  updatedAt                DateTime         @default(now()) @updatedAt
+  name                     String
+  birthDate                DateTime
+  documentNumber           String           @unique
+  gender                   gender_type_enum
+  politicallyExposedPerson Boolean          @default(false)
+  profession               String?
+  childQuantity            Int?
+  income                   Float?
+  hasPet                   Boolean          @default(false)
+  addressId                String           @unique
+  contactId                String           @unique
+  address                  address          @relation(fields: [addressId], references: [id])
+  contact                  contact          @relation(fields: [contactId], references: [id])
+  proposal                 proposal[]
+  policies                 policy[]
+}
+
+model partner {
+  id             String             @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @default(now()) @updatedAt
+  friendyName    String
+  name           String
+  documentNumber String
+  addressId      String?            @unique
+  contactId      String?            @unique
+  providerId     String
+  address        address?           @relation(fields: [addressId], references: [id])
+  contact        contact?           @relation(fields: [contactId], references: [id])
+  provider       provider           @relation(fields: [providerId], references: [id])
+  products       product_partners[]
+  proposal       proposal[]
+  quote          quote[]
+  policies       policy[]
+}
+
+model provider {
+  id               String              @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @default(now()) @updatedAt
+  name             String
+  friendyName      String
+  documentNumber   String
+  addressId        String?             @unique
+  contactId        String?             @unique
+  insuredCoverages insured_coverages[]
+  products         product[]
+  address          address?            @relation(fields: [addressId], references: [id])
+  contact          contact?            @relation(fields: [contactId], references: [id])
+  policies         policy[]
+  partner          partner[]
+}
+
+model product_type {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+  friendyName String
+  code        String    @unique
+  susepCode   String?
+  products    product[]
+}
+
+model coverage {
+  id               String              @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @default(now()) @updatedAt
+  code             String
+  friendyName      String
+  information      String?
+  longDescription  String?
+  type             coverage_type_enum  @default(insurance)
+  insuredCoverages insured_coverages[]
+}
+
+model product {
+  id                     String              @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @default(now()) @updatedAt
+  name                   String 
+  description            String
+  maxAge                 Int?
+  durationDays           Int?
+  insuranceDeductible    Float?
+  IOF                    Float
+  providerPrice          Float
+  providerInsurableGroup String
+  commission             Float?
+  markUp                 Float               @default(1.4)
+  productTypeId          String
+  providerId             String
+  productType            product_type        @relation(fields: [productTypeId], references: [id])
+  provider               provider            @relation(fields: [providerId], references: [id])
+  insuredCoverages       insured_coverages[]
+  partners               product_partners[]
+  quotes                 quote[]
+  policies               policy[]
+}
+
+model product_partners {
+  productId String
+  partnerId String
+  partner   partner @relation(fields: [partnerId], references: [id])
+  product   product @relation(fields: [productId], references: [id])
+
+  @@id([productId, partnerId])
+}
+
+model insured_coverages {
+  id          String   @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  minValue    Float?
+  maxValue    Float?
+  gracePeriod Int?
+  coverageId  String
+  providerId  String
+  provider    provider @relation(fields: [providerId], references: [id])
+  coverage    coverage @relation(fields: [coverageId], references: [id])
+  product     product? @relation(fields: [productId], references: [id])
+  productId   String?
+}
+
+model quote {
+  id        String    @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  productId String
+  partnerId String
+  product   product   @relation(fields: [productId], references: [id])
+  partner   partner   @relation(fields: [partnerId], references: [id])
+  proposal  proposal?
+}
+
+model proposal {
+  id         String               @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @default(now()) @updatedAt
+  status     proposal_status_enum @default(waitingPayment)
+  customerId String
+  partnerId  String
+  customer   customer             @relation(fields: [customerId], references: [id])
+  partner    partner              @relation(fields: [partnerId], references: [id])
+  quote      quote                @relation(fields: [quoteId], references: [id])
+  quoteId    String               @unique
+}
+
+model policy {
+  id                 String                           @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt          DateTime                         @default(now())
+  updatedAt          DateTime                         @default(now()) @updatedAt
+  certificateNumber  String
+  paymentId          String
+  paymentProvider    policy_payment_provider_enum     @default(stripe)
+  status             policy_status_enum               @default(active)
+  pauseDateStart     DateTime?
+  pauseDateEnd       DateTime?
+  cancellationDate   DateTime?
+  cancellationReason policy_cancellation_reason_enum?
+  customerId         String
+  partnerId          String
+  productId          String
+  providerId         String
+  customer           customer                         @relation(fields: [customerId], references: [id])
+  partner            partner                          @relation(fields: [partnerId], references: [id])
+  product            product                          @relation(fields: [productId], references: [id])
+  provider           provider                         @relation(fields: [providerId], references: [id])
+}
+
+model address {
+  id           String    @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now()) @updatedAt
+  cep          String
+  street       String
+  number       String
+  complement   String?
+  neighborhood String
+  city         String
+  state        String
+  provider     provider?
+  customer     customer?
+  partner      partner?
+}
+
+model contact {
+  id          String    @id @default(dbgenerated("uuid_generate_v4()"))
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
+  phoneNumber String?
+  email       String?
+  provider    provider?
+  partner     partner?
+  customer    customer?
+}
+
+// enums
+
+enum coverage_type_enum {
+  insurance
+  assistance
+}
+
+enum gender_type_enum {
+  M
+  F
+  NB
+  O
+}
+
+enum proposal_status_enum {
+  waitingPayment
+  payd
+  canceled
+}
+
+enum policy_status_enum {
+  active
+  canceled
+  delayed
+  paused
+}
+
+enum policy_payment_provider_enum {
+  stripe
+}
+
+enum policy_cancellation_reason_enum {
+  other
+  duplicateOrNewInsurance
+  notMeetExpectations
+  dontWantAnymore
+  foundInsuranceBetterPrice
+}

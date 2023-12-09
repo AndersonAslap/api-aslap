@@ -1,0 +1,13 @@
+[
+  {
+    "code": 1,
+    "name": "Morte Acidental",
+    "information": "string",
+    "eBaoCode": "C101112",
+    "sumInsured": 1700.01,
+    "daily": 3,
+    "value": 168.01,
+    "valueMonthly": 14,
+    "isRequired": true
+  }
+]

@@ -1,0 +1,13 @@
+{
+  "userId": "enviado_na_req",
+  "paymentMethods": [
+    {
+      "paymentMethodId": "card_123456789",
+      "provider": "stripe",
+      "preferenceOrder": 0,
+      "createdAt": "2021-04-22T18:36:48",
+      "updatedAt": "2021-04-22T18:36:48",
+      "active": true
+    }
+  ]
+}

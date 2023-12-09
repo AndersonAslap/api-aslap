@@ -1,0 +1,10 @@
+[
+  {
+    "paymentGatewayMethodId": 1,
+    "paymentGatewayId": 1,
+    "paymentGatewayName": "STRIPE",
+    "paymentMethodId": 1,
+    "paymentMethodName": "CREDIT CARD",
+    "hasPaymentOnIssue": true
+  }
+]

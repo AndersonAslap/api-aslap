@@ -1,0 +1,9 @@
+{
+  "userId": "enviado_na_req",
+  "paymentMethodId": "enviado_na_req",
+  "provider": "stripe",
+  "preferenceOrder": 0,
+  "createdAt": "2021-04-22T18:36:48",
+  "updatedAt": "2021-04-22T18:36:48",
+  "active": true
+}

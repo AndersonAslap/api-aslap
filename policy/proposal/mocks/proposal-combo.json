@@ -1,0 +1,8 @@
+[
+  {
+    "product": "enviado_na_req",
+    "ticket": "string",
+    "amount": 50.05,
+    "typeId": 3
+  }
+]

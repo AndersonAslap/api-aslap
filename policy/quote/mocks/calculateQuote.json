@@ -1,0 +1,11 @@
+[
+  {
+    "coverage": {
+      "code": 15,
+      "value": 168.01
+    },
+    "cover": 100,
+    "deductible": 25,
+    "billingDivider": 12
+  }
+]
